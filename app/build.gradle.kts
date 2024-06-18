@@ -68,10 +68,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Room
-    val roomVersion = "2.6.1"
-    implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    //RoomDB
+    implementation(libs.androidx.room.ktx)
+    kapt("androidx.room:room-compiler:2.6.1")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
+    //LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 }
