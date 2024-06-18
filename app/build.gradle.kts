@@ -70,7 +70,7 @@ dependencies {
 
     //RoomDB
     implementation(libs.androidx.room.ktx)
-    kapt("androidx.room:room-compiler:2.6.1")
+    kapt(libs.androidx.room.compiler)
 
     //LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
