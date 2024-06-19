@@ -1,7 +1,5 @@
 package com.viz.to_do_listapp
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ShoppingCart
 
 object Routes {
     val App = "App"
