@@ -75,4 +75,11 @@ dependencies {
 
     //LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    implementation(libs.androidx.material.icons.extended)
+
+    //Animation
+    implementation(libs.androidx.animation)
+
+
 }
