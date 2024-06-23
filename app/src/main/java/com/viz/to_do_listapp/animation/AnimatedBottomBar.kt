@@ -17,10 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,7 +31,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -116,13 +112,13 @@ fun NavBarItem(modifier: Modifier = Modifier, page: NavPage, selected: Boolean =
 @Composable
 fun AnimatedFab(
     modifier: Modifier,
-    icon: ImageVector? = null,
+    icon: Painter? = null,
     opacity: Float = 1f,
     backgroundColor: Color = MaterialTheme.colorScheme.tertiary,
-    onClick: () -> Unit = {}
+    onClick : () -> Unit = {}
 ) {
     FloatingActionButton(
-        onClick = onClick,
+        onClick = onClick ,
         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
         containerColor = backgroundColor ,
         modifier = modifier.scale(1.25f),// .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
@@ -131,9 +127,10 @@ fun AnimatedFab(
     ) {
         icon?.let {
             Icon(
-                imageVector = it,
+                painter = it,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = opacity)
+                tint = Color.White.copy(alpha = opacity),
+                modifier = Modifier.size(32.dp)
             )
         }
     }
@@ -146,8 +143,6 @@ fun FabGroup(
     animationProgress: Float = 0f,
     renderEffect: androidx.compose.ui.graphics.RenderEffect? = null,
     toggleAnimation: () -> Unit = { },
-//    viewModel: TaskViewModel
-//    navController: NavController
 ) {
     Box(
         Modifier
@@ -158,7 +153,7 @@ fun FabGroup(
     ) {
 
         AnimatedFab(
-            icon = Icons.Default.Category,
+            icon = painterResource(id = R.drawable.categories),
             modifier = Modifier
                 .padding(
                     PaddingValues(
@@ -167,7 +162,7 @@ fun FabGroup(
                     )
                 ),
             opacity = LinearEasing.transform(0.2f, 0.7f, animationProgress),
-            onClick = { }
+            onClick = {  }
         )
 
 //        AnimatedFab(
@@ -181,7 +176,7 @@ fun FabGroup(
 //        )
 
         AnimatedFab(
-            icon = Icons.Default.Checklist,
+            icon = painterResource(id = R.drawable.list),
             modifier = Modifier.padding(
                 PaddingValues(
                     bottom = 64.dp * FastOutSlowInEasing.transform(0.2f, 1.2f, animationProgress), // 0.2 to 1.0
@@ -189,12 +184,13 @@ fun FabGroup(
                 )
             ),
             opacity = LinearEasing.transform(0.4f, 0.9f, animationProgress),
+            onClick = { }
           //  onClick = {  navController.navigate(Routes.Home.route)}
         )
 
 
         AnimatedFab(
-            icon = Icons.Default.Add,
+            icon = painterResource(id = R.drawable.plus),
             modifier = Modifier
                 .rotate(
                     225 * FastOutSlowInEasing
