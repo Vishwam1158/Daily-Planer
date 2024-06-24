@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.viz.to_do_listapp.screens.Calendar
 import com.viz.to_do_listapp.screens.HomePage
+import com.viz.to_do_listapp.screens.Task
 import com.viz.to_do_listapp.viewModel.TaskViewModel
 
 @Composable
@@ -24,6 +25,9 @@ fun Navigation(viewModel: TaskViewModel) {
         }
         composable(Routes.Calendar.route) {
             Calendar(navController = navController)
+        }
+        composable(Routes.Task) {
+            Task(viewModel, navController = navController)
         }
 
     }
