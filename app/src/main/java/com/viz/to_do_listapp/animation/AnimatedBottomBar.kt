@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,18 +26,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.viz.to_do_listapp.NavPage
 import com.viz.to_do_listapp.Routes
 import com.viz.to_do_listapp.transform
@@ -50,37 +49,76 @@ import kotlin.math.sin
 // BottomBar container and list of Icons
 @Composable
 fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->Unit = {}) {
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .height(90.dp)
-            .paint(
-                painter = painterResource(R.drawable.bottom_bar_container),
-                contentScale = ContentScale.FillHeight,
-                alignment = Alignment.Center
-            )
-            .padding(horizontal = 40.dp)
-
+    Box(
     ) {
-//        listOf( Icons.Filled.Home,Icons.Filled.Call).map { image ->
-//            IconButton(onClick = { }) {
-//                Icon(imageVector = image, contentDescription = null, tint = Color.White)
-//            }
-//        }
-        for (page in Routes.pages) {
-            NavBarItem(
-                page = page,
-                selected = selectedRoute == page.route,
-                modifier = Modifier
-                    .clickable {
-                        onChange(page.route)
-                    }
+        Row(
+        ) {
+            Image(
+                painter = painterResource(R.drawable.bottom_bar_color),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth().padding(top = 64.dp).size(200.dp)
             )
         }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 138.dp)
+                .height(90.dp)
+                .padding(horizontal = 40.dp)
+
+        ) {
+            for (page in Routes.pages) {
+                NavBarItem(
+                    page = page,
+                    selected = selectedRoute == page.route,
+                    modifier = Modifier
+                        .clickable {
+                            onChange(page.route)
+                        }
+                )
+            }
+        }
+
     }
 }
+
+
+//@Composable
+//fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->Unit = {}) {
+//
+//    Row(
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        modifier = Modifier
+//            .height(90.dp)
+//            .paint(
+//                painter = painterResource(R.drawable.temp2),
+//                contentScale = ContentScale.FillHeight,
+//                alignment = Alignment.Center
+//            )
+//            .padding(horizontal = 40.dp)
+//
+//    ) {
+////        listOf( Icons.Filled.Home,Icons.Filled.Call).map { image ->
+////            IconButton(onClick = { }) {
+////                Icon(imageVector = image, contentDescription = null, tint = Color.White)
+////            }
+////        }
+//        for (page in Routes.pages) {
+//            NavBarItem(
+//                page = page,
+//                selected = selectedRoute == page.route,
+//                modifier = Modifier
+//                    .clickable {
+//                        onChange(page.route)
+//                    }
+//            )
+//        }
+//    }
+//}
+
 
 @Composable
 fun NavBarItem(modifier: Modifier = Modifier, page: NavPage, selected: Boolean = false ) {
@@ -140,6 +178,7 @@ fun AnimatedFab(
 // Floating Action button that open with three other button
 @Composable
 fun FabGroup(
+    navController: NavController,
     animationProgress: Float = 0f,
     renderEffect: androidx.compose.ui.graphics.RenderEffect? = null,
     toggleAnimation: () -> Unit = { },
@@ -148,7 +187,7 @@ fun FabGroup(
         Modifier
             .fillMaxSize()
             .graphicsLayer { this.renderEffect = renderEffect }
-            .padding(bottom = 28.dp),
+            .padding(bottom = 47.dp), //28
         contentAlignment = Alignment.BottomCenter
     ) {
 
@@ -162,7 +201,7 @@ fun FabGroup(
                     )
                 ),
             opacity = LinearEasing.transform(0.2f, 0.7f, animationProgress),
-            onClick = {  }
+            onClick = { navController.navigate(Routes.Calendar.route) }
         )
 
 //        AnimatedFab(
@@ -184,8 +223,7 @@ fun FabGroup(
                 )
             ),
             opacity = LinearEasing.transform(0.4f, 0.9f, animationProgress),
-            onClick = { }
-          //  onClick = {  navController.navigate(Routes.Home.route)}
+            onClick = { navController.navigate(Routes.Task)}
         )
 
 
@@ -210,7 +248,7 @@ fun Circle(color: Color, animationProgress: Float) {
 
     Box(
         modifier = Modifier
-            .padding(30.dp)
+            .padding(42.dp)
             .size(56.dp)
             .scale(2 - animationValue)
             .border(
@@ -222,13 +260,19 @@ fun Circle(color: Color, animationProgress: Float) {
 }
 
 
-@Composable
-@Preview(showBackground = true)
-private fun CustomBottomNavigationPreview() {
-    BottomAppBar(onChange = {})
-//    AnimatedFab(modifier = Modifier.scale(1.25f),)
+//@Composable
+//@Preview(showBackground = true)
+//private fun CustomBottomNavigationPreview() {
+////    BottomAppBar(onChange = {})
+////    AnimatedFab(modifier = Modifier.scale(1.25f),)
 //    FabGroup()
-}
+//}
+
+
+
+
+
+
 
 
 

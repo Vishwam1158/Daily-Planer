@@ -22,8 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.viz.to_do_listapp.viewModel.TaskViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -51,7 +52,8 @@ private fun getRenderEffect(): RenderEffect {
 //Animation Effect
 @Composable
 fun AnimationScreen(
-//    selectedRoute : String = Routes.Home.route
+    navController: NavController,
+    viewModel: TaskViewModel
 ) {
     val isMenuExtended = remember { mutableStateOf(false) }
 
@@ -77,32 +79,55 @@ fun AnimationScreen(
         null
     }
         AnimationScreen(
+            navController = navController,
+            viewModel = viewModel,
             renderEffect = renderEffect,
             fabAnimationProgress = fabAnimationProgress,
             clickAnimationProgress = clickAnimationProgress,
-        ) {
-            isMenuExtended.value = isMenuExtended.value.not()  // Toggle the FloatActionButton  and Provide Option
-        }
+            toggleAnimation = { isMenuExtended.value = isMenuExtended.value.not() }
+        ) //{
+            //isMenuExtended.value = isMenuExtended.value.not()  // Toggle the FloatActionButton  and Provide Option
+        //}
+
 }
 
 
 @Composable
 fun AnimationScreen(
+    navController: NavController,
+    viewModel: TaskViewModel,
+//    modifier: Modifier = modifier,
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
     fabAnimationProgress: Float = 0f,
     clickAnimationProgress: Float = 0f,
     toggleAnimation: () -> Unit = { },
 ) {
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 24.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-//        BottomAppBar()
 
-        FabGroup(renderEffect = renderEffect, animationProgress = fabAnimationProgress)
+//        val selectedRoute = remember { mutableStateOf(Routes.Home.route) }
+//        Column() {
+//            when (selectedRoute.value) {
+//                Routes.Home.route -> HomePage(viewModel, navController)
+//                Routes.Calendar.route -> Calendar(navController)
+//
+//            }
+//        }
+//
+//        BottomAppBar(
+//            selectedRoute = selectedRoute.value,
+//            onChange = { route ->
+//                selectedRoute.value = route
+//            }
+//        )
+
+        FabGroup(navController = navController, renderEffect = renderEffect, animationProgress = fabAnimationProgress)
         FabGroup(
+            navController = navController,
             renderEffect = null,
             animationProgress = fabAnimationProgress,
             toggleAnimation = toggleAnimation
@@ -113,8 +138,9 @@ fun AnimationScreen(
             animationProgress = 0.5f
         )
 
-        FabGroup(renderEffect = renderEffect, animationProgress = fabAnimationProgress)
+        FabGroup(navController = navController, renderEffect = renderEffect, animationProgress = fabAnimationProgress)
         FabGroup(
+            navController = navController,
             renderEffect = null,
             animationProgress = fabAnimationProgress,
             toggleAnimation = toggleAnimation
@@ -130,8 +156,12 @@ fun AnimationScreen(
 
 
 
-@Preview(showBackground = true)
-@Composable
-private fun AnimationScreennPreview() {
-    AnimationScreen(null)
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun AnimationScreennPreview() {
+//    AnimationScreen(null)
+//}
+
+
+//ChatGpt//
+
