@@ -21,16 +21,16 @@ fun TopAppBar() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-            Icon(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = "menu button",
-                modifier = Modifier.size(32.dp, 32.dp)
-                )
-            Icon(
-                painter = painterResource(id = R.drawable.user),
-                contentDescription = "menu button",
-                modifier = Modifier.size(32.dp, 32.dp)
-                )
+        Icon(
+            painter = painterResource(id = R.drawable.menu),
+            contentDescription = "menu button",
+            modifier = Modifier.size(32.dp, 32.dp)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.user),
+            contentDescription = "menu button",
+            modifier = Modifier.size(32.dp, 32.dp)
+        )
     }
 }
 
