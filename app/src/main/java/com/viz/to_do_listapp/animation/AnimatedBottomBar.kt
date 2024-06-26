@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -51,22 +52,22 @@ import kotlin.math.sin
 fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->Unit = {}) {
     Box(
     ) {
-        Row(
-        ) {
+//        Row(
+//        ) {
             Image(
                 painter = painterResource(R.drawable.bottom_bar_color),
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().padding(top = 64.dp).size(200.dp)
+                modifier = Modifier.fillMaxWidth().size(100.dp)//.padding(top = 64.dp).size(200.dp)
             )
-        }
+//        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 138.dp)
+                .padding(top = 22.dp)
                 .height(90.dp)
-                .padding(horizontal = 40.dp)
+                .padding(horizontal = 48.dp)
 
         ) {
             for (page in Routes.pages) {
@@ -187,7 +188,7 @@ fun FabGroup(
         Modifier
             .fillMaxSize()
             .graphicsLayer { this.renderEffect = renderEffect }
-            .padding(bottom = 47.dp), //28
+            .padding(bottom = 42.dp, start = 8.dp), //set floating buttons position
         contentAlignment = Alignment.BottomCenter
     ) {
 
@@ -248,7 +249,7 @@ fun Circle(color: Color, animationProgress: Float) {
 
     Box(
         modifier = Modifier
-            .padding(42.dp)
+           .padding(42.dp)
             .size(56.dp)
             .scale(2 - animationValue)
             .border(
@@ -260,13 +261,13 @@ fun Circle(color: Color, animationProgress: Float) {
 }
 
 
-//@Composable
-//@Preview(showBackground = true)
-//private fun CustomBottomNavigationPreview() {
-////    BottomAppBar(onChange = {})
-////    AnimatedFab(modifier = Modifier.scale(1.25f),)
-//    FabGroup()
-//}
+@Composable
+@Preview(showBackground = true)
+private fun CustomBottomNavigationPreview() {
+    BottomAppBar(onChange = {})
+    AnimatedFab(modifier = Modifier.scale(1.25f),)
+//    FabGroup(navController = NavController(LocalContext.current))
+}
 
 
 
