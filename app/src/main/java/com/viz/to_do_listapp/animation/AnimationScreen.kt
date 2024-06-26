@@ -11,6 +11,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.viz.to_do_listapp.viewModel.TaskViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -53,7 +55,7 @@ private fun getRenderEffect(): RenderEffect {
 @Composable
 fun AnimationScreen(
     navController: NavController,
-    viewModel: TaskViewModel
+//    viewModel: TaskViewModel
 ) {
     val isMenuExtended = remember { mutableStateOf(false) }
 
@@ -80,7 +82,7 @@ fun AnimationScreen(
     }
         AnimationScreen(
             navController = navController,
-            viewModel = viewModel,
+//            viewModel = viewModel,
             renderEffect = renderEffect,
             fabAnimationProgress = fabAnimationProgress,
             clickAnimationProgress = clickAnimationProgress,
@@ -95,7 +97,7 @@ fun AnimationScreen(
 @Composable
 fun AnimationScreen(
     navController: NavController,
-    viewModel: TaskViewModel,
+//    viewModel: TaskViewModel,
 //    modifier: Modifier = modifier,
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
     fabAnimationProgress: Float = 0f,
@@ -156,11 +158,18 @@ fun AnimationScreen(
 
 
 
-//@Preview(showBackground = true)
-//@Composable
-//private fun AnimationScreennPreview() {
-//    AnimationScreen(null)
-//}
+@Preview(showBackground = true)
+@Composable
+private fun AnimationScreenPreview() {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.Bottom,
+//        horizontalArrangement = Arrangement.Center
+    ) {
+        BottomAppBar()
+    }
+    AnimationScreen(navController = NavController(LocalContext.current))
+}
 
 
 //ChatGpt//
