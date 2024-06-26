@@ -26,47 +26,41 @@ import com.viz.to_do_listapp.viewModel.TaskViewModel
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.viz.to_do_listapp.R
 
-
 @Composable
-fun HomePage( viewModel: TaskViewModel, navController: NavController) {
+fun HomePage(viewModel: TaskViewModel, navController: NavController) {
     var taskList by remember { mutableStateOf(listOf<Task>()) }
     viewModel.getTasks().observe(LocalLifecycleOwner.current) { taskList = it }
 
-    var showOverlayState by remember { mutableStateOf(mapOf<Int, Boolean>()) }
-
-//    val gradient = Brush.verticalGradient(
-//        colors = listOf( Color(0xFF222222),Color(0xFFD7D2C9),)
-//    )
-
     Column(
-        modifier = Modifier.padding(16.dp),//.background(gradient),
+        modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
         LazyColumn {
             items(taskList) { task ->
-                val isOverlayShown = showOverlayState[task.id] ?: false
-
                 Column(
                     Modifier.clickable { viewModel.deleteTask(task) }
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
                     ) {
-                        Image(painter = painterResource(id = R.drawable.task_title_border ), contentDescription = "")
+                        Image(
+                            painter = painterResource(id = R.drawable.task_title_border),
+                            contentDescription = ""
+                        )
 
-                        IconButton(onClick = {
-                            showOverlayState = showOverlayState.toMutableMap().apply {
-                                this[task.id] = !isOverlayShown }
-                        },
+                        IconButton(
+                            onClick = {
+                                viewModel.toggleTaskCompletion(task)
+                            },
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding( start = 28.dp, top = 4.dp)
+                                .padding(start = 28.dp, top = 4.dp)
                                 .size(64.dp),
                         ) {
                             Icon(
@@ -76,12 +70,13 @@ fun HomePage( viewModel: TaskViewModel, navController: NavController) {
                                 tint = Color.Black
                             )
                         }
-                        if (isOverlayShown) {//showOverlay
+                        if (task.isComplete) {
                             Image(
-                                painter = (painterResource(R.drawable.task_tick)),
+                                painter = painterResource(R.drawable.task_tick),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .align(Alignment.TopStart).padding(start = 36.dp)
+                                    .align(Alignment.TopStart)
+                                    .padding(start = 36.dp)
                                     .size(56.dp)
                             )
                         }
@@ -90,10 +85,9 @@ fun HomePage( viewModel: TaskViewModel, navController: NavController) {
                             text = task.title,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
+                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None,
                             modifier = Modifier.align(Alignment.CenterStart).padding(start = 108.dp)
                         )
-
-
                     }
                 }
             }
@@ -101,44 +95,46 @@ fun HomePage( viewModel: TaskViewModel, navController: NavController) {
     }
 }
 
+
+
 @Preview(showBackground = true)
 @Composable
 private fun TempPreview() {
-//    Box(contentAlignment = Alignment.Center) {
-//
-//        Box(
-//            contentAlignment = Alignment.Center,
-//        ) {
-//            Image(painter = painterResource(id = R.drawable.task_title_border ), contentDescription = "")
-//
-//            IconButton(onClick = {  },
-//                modifier = Modifier
-//                    .align(Alignment.TopStart)
-//                    .padding( start = 28.dp, top = 4.dp).size(64.dp),
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.task_round),
-//                    contentDescription = "Example Image",
-//                    modifier = Modifier.size(48.dp),
-//                    tint = Color.Black
-//                )
-//            }
-//            Image(
-//                painter = (painterResource(R.drawable.task_tick)),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .align(Alignment.TopStart).padding(start = 36.dp)
-//                    .size(56.dp)
-//            )
-//
-//
-//
-//            }
-//            Text(
-//                text = "vizzzzzzzzzzzzzzz",
-//                fontSize = 24.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.align(Alignment.CenterStart).padding(start = 108.dp)
-//            )
-//    }
+    Box(contentAlignment = Alignment.Center) {
+
+        Box(
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(painter = painterResource(id = R.drawable.task_title_border ), contentDescription = "")
+
+            IconButton(onClick = {  },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding( start = 28.dp, top = 4.dp).size(64.dp),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.task_round),
+                    contentDescription = "Example Image",
+                    modifier = Modifier.size(48.dp),
+                    tint = Color.Black
+                )
+            }
+            Image(
+                painter = (painterResource(R.drawable.task_tick)),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopStart).padding(start = 36.dp)
+                    .size(56.dp)
+            )
+
+
+
+            }
+            Text(
+                text = "vizzzzzzzzzzzzzzz",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 108.dp)
+            )
+    }
 }
