@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("kapt")
+    id("newrelic")
 }
+
+
 
 android {
     namespace = "com.viz.to_do_listapp"
@@ -50,6 +53,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -81,5 +85,7 @@ dependencies {
     //Animation
     implementation(libs.androidx.animation)
 
+    //newrelic
+    implementation("com.newrelic.agent.android:android-agent:7.4.1")
 
 }
