@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -136,7 +137,7 @@ fun AnimationScreen(
         )
 
         Circle(
-            color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
             animationProgress = 0.5f
         )
 
@@ -158,19 +159,16 @@ fun AnimationScreen(
 
 
 
-@Preview(showBackground = true)
-@Composable
-private fun AnimationScreenPreview() {
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.Bottom,
-//        horizontalArrangement = Arrangement.Center
-    ) {
-        BottomAppBar()
-    }
-    AnimationScreen(navController = NavController(LocalContext.current))
-}
-
-
-//ChatGpt//
+//@Preview(showBackground = true)
+//@Composable
+//private fun AnimationScreenPreview() {
+//    Row(
+//        modifier = Modifier.fillMaxSize().background(Color.Cyan),
+//        verticalAlignment = Alignment.Bottom,
+////        horizontalArrangement = Arrangement.Center
+//    ) {
+//        BottomAppBar()
+//    }
+//    AnimationScreen(navController = NavController(LocalContext.current))
+//}
 

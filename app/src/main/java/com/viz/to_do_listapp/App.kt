@@ -20,12 +20,17 @@ import com.viz.to_do_listapp.screens.TopAppBar
 import com.viz.to_do_listapp.viewModel.TaskViewModel
 
 @Composable
-fun App(viewModel : TaskViewModel, navController: NavController) {
+fun App(
+    viewModel: TaskViewModel,
+    navController: NavController,
+    darkTheme: Boolean,
+    onThemeUpdated: () -> Unit
+) {
     val selectedRoute = remember { mutableStateOf(Routes.Home.route) }
 
     Scaffold(
         topBar = {
-            TopAppBar()
+            TopAppBar(darkTheme, onThemeUpdated)
         },
 //        bottomBar = {
 //            BottomAppBar(
@@ -41,8 +46,8 @@ fun App(viewModel : TaskViewModel, navController: NavController) {
     ) {
         Column(modifier = Modifier.padding(it)) {
             when (selectedRoute.value) {
-                Routes.Home.route -> HomePage(viewModel, navController)
-                Routes.Calendar.route -> Calendar(navController)
+                Routes.Home.route -> HomePage(viewModel, darkTheme) //navController
+                Routes.Calendar.route -> Calendar() //navController
 
             }
         }
@@ -59,9 +64,10 @@ fun App(viewModel : TaskViewModel, navController: NavController) {
                 selectedRoute = selectedRoute.value,
                 onChange = { route ->
                     selectedRoute.value = route
-                }
+                },
+                darkTheme = darkTheme
             )
-            AnimationScreen(navController = navController, viewModel)
+            AnimationScreen(navController = navController) // viewModel)
     }
 }
 
