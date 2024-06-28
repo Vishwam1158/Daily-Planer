@@ -4,6 +4,7 @@ import com.viz.to_do_listapp.R
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,8 +43,11 @@ import androidx.navigation.NavController
 import com.viz.to_do_listapp.NavPage
 import com.viz.to_do_listapp.Routes
 import com.viz.to_do_listapp.transform
-import com.viz.to_do_listapp.ui.theme.PrimaryTint
-import com.viz.to_do_listapp.ui.theme.SecondaryTint
+import com.viz.to_do_listapp.ui.theme.DarkPrimaryTint
+import com.viz.to_do_listapp.ui.theme.DarkSecondaryTint
+import com.viz.to_do_listapp.ui.theme.LightPrimaryText
+import com.viz.to_do_listapp.ui.theme.LightPrimaryTint
+import com.viz.to_do_listapp.ui.theme.LightSecondaryTint
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -49,27 +55,36 @@ import kotlin.math.sin
 
 // BottomBar container and list of Icons
 @Composable
-fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->Unit = {}) {
-    Box(
-    ) {
+fun BottomAppBar(
+    selectedRoute: String = Routes.Home.route,
+    onChange: (String)->Unit = {},
+    darkTheme: Boolean
+) {
+    Box {
 //        Row(
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//                .size(200.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.Center
 //        ) {
-            Image(
-                painter = painterResource(R.drawable.bottom_bar_color),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth().size(100.dp)//.padding(top = 64.dp).size(200.dp)
-            )
+
 //        }
+//        Spacer(modifier = Modifier.height(112.dp))
+    }
+    Box {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 22.dp)
-                .height(90.dp)
-                .padding(horizontal = 48.dp)
+                .background(MaterialTheme.colorScheme.background) //
+                .padding(top = 38.dp)
+//                .height(90.dp)
+                .padding(horizontal = 48.dp,)
 
         ) {
+
             for (page in Routes.pages) {
                 NavBarItem(
                     page = page,
@@ -77,12 +92,27 @@ fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->
                     modifier = Modifier
                         .clickable {
                             onChange(page.route)
-                        }
+                        },
+                    darkTheme = darkTheme
                 )
             }
         }
-
     }
+        Image(
+            painter = painterResource(R.drawable.bottom_bar_container2),
+            contentDescription = "bottom bar container",
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentScale = ContentScale.FillWidth,
+            colorFilter = ColorFilter.tint(
+                if (darkTheme) {
+                    DarkPrimaryTint
+                } else {
+                    LightPrimaryTint
+                }
+            )
+        )
+
 }
 
 
@@ -122,7 +152,12 @@ fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->
 
 
 @Composable
-fun NavBarItem(modifier: Modifier = Modifier, page: NavPage, selected: Boolean = false ) {
+fun NavBarItem(
+    modifier: Modifier = Modifier,
+    page: NavPage,
+    selected: Boolean = false,
+    darkTheme: Boolean
+    ) {
     Column(
         modifier = modifier.padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -131,7 +166,11 @@ fun NavBarItem(modifier: Modifier = Modifier, page: NavPage, selected: Boolean =
             painter = painterResource(page.icon),
             contentDescription = page.name,
             colorFilter = ColorFilter.tint(
-                if (selected) PrimaryTint else SecondaryTint
+                if (darkTheme) {
+                    if (selected) DarkPrimaryTint else DarkSecondaryTint
+                } else {
+                    if (selected) LightPrimaryTint else LightSecondaryTint
+                }
             ),
             modifier = Modifier
                 .padding(bottom = 8.dp)
@@ -140,7 +179,7 @@ fun NavBarItem(modifier: Modifier = Modifier, page: NavPage, selected: Boolean =
 
         Text(page.name,
             fontSize = 12.sp,
-            color = if (selected) PrimaryTint else SecondaryTint
+//            color = if (selected) PrimaryTint else SecondaryTint
 
         )
     }
@@ -153,13 +192,14 @@ fun AnimatedFab(
     modifier: Modifier,
     icon: Painter? = null,
     opacity: Float = 1f,
-    backgroundColor: Color = MaterialTheme.colorScheme.tertiary,
+    backgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     onClick : () -> Unit = {}
 ) {
     FloatingActionButton(
         onClick = onClick ,
         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
         containerColor = backgroundColor ,
+//        contentColor = MaterialTheme.colorScheme.background,
         modifier = modifier.scale(1.25f),// .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
         shape = RoundedCornerShape(50.dp),
 
@@ -168,7 +208,7 @@ fun AnimatedFab(
             Icon(
                 painter = it,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = opacity),
+                tint = MaterialTheme.colorScheme.outlineVariant.copy(alpha = opacity),
                 modifier = Modifier.size(32.dp)
             )
         }
@@ -188,7 +228,7 @@ fun FabGroup(
         Modifier
             .fillMaxSize()
             .graphicsLayer { this.renderEffect = renderEffect }
-            .padding(bottom = 42.dp, start = 8.dp), //set floating buttons position
+            .padding(bottom = 40.dp,), //set floating buttons position
         contentAlignment = Alignment.BottomCenter
     ) {
 
@@ -249,7 +289,7 @@ fun Circle(color: Color, animationProgress: Float) {
 
     Box(
         modifier = Modifier
-           .padding(42.dp)
+            .padding(42.dp) //set floating button's background circle position
             .size(56.dp)
             .scale(2 - animationValue)
             .border(
@@ -264,7 +304,7 @@ fun Circle(color: Color, animationProgress: Float) {
 @Composable
 @Preview(showBackground = true)
 private fun CustomBottomNavigationPreview() {
-    BottomAppBar(onChange = {})
+    BottomAppBar(onChange = {}, darkTheme = false)
     AnimatedFab(modifier = Modifier.scale(1.25f),)
 //    FabGroup(navController = NavController(LocalContext.current))
 }
