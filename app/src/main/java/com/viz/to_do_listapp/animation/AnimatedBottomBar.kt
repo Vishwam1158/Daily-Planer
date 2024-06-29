@@ -242,7 +242,7 @@ fun FabGroup(
                     )
                 ),
             opacity = LinearEasing.transform(0.2f, 0.7f, animationProgress),
-            onClick = { navController.navigate(Routes.Calendar.route) }
+            onClick = { navController.navigate(Routes.category) }
         )
 
 //        AnimatedFab(
