@@ -11,8 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,22 +56,101 @@ fun Task(viewModel: TaskViewModel, navController: NavController) {
                     onClick = { navController.navigate(Routes.App) },
                     shape = RoundedCornerShape(12),
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
-                    border = BorderStroke(1.dp, Color.Black)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text(text = "Cancel", color = Color.Black)
+                    Text(text = "Cancel", color = MaterialTheme.colorScheme.onBackground)
                 }
                 Button(
                     onClick = {
-                        if(task.title.isNotBlank() || task.title.length <=20) {
+                        if(task.title.isNotBlank()) {
                             viewModel.upsertTask(task)
                             navController.navigate(Routes.App)
                         } else Toast.makeText(context, "Please enter a title", Toast.LENGTH_SHORT).show()
                               },
                     shape = RoundedCornerShape(12),
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
-                    border = BorderStroke(1.dp, Color.Black)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text(text = "Add", color = Color.Black)
+                    Text(text = "Add", color = MaterialTheme.colorScheme.onBackground)
+                }
+
+            }
+        },
+
+        title = { Text(text = "Create Task", color = MaterialTheme.colorScheme.onBackground)},
+        text = {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+//                    onValueChange = {
+//                        if(task.title.length <= 20)  title = it else Toast.makeText(navController.context, "Title cannot be more than 20 characters", Toast.LENGTH_SHORT).show() },
+                    onValueChange = {
+                        if (it.length <= 25) {
+                            title = it
+                        } else {
+                            Toast.makeText(context, "Title cannot be more than 25 characters", Toast.LENGTH_SHORT).show()
+                        } },
+                    label = { Text(text = "Task") },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.background,
+                        focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+
+//                        focusedContainerColor  = MaterialTheme.colorScheme.background,
+//                        unfocusedContainerColor = Color.Blue
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    singleLine = true
+                )
+//                OutlinedTextField(
+//                    value = description,
+//                    onValueChange = { description = it },
+//                    label = { Text(text = "details") },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(8.dp)
+//                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    )
+
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+private fun TaskPreview() {
+    AlertDialog(
+        onDismissRequest = {  },
+        confirmButton = {
+            Row (modifier = Modifier
+                .fillMaxWidth(),
+//                .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+
+                Button(
+                    onClick = { },
+                    shape = RoundedCornerShape(12),
+                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                ) {
+                    Text(text = "Cancel", color = MaterialTheme.colorScheme.primary)
+                }
+                Button(
+                    onClick = {},
+                    shape = RoundedCornerShape(12),
+                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                ) {
+                    Text(text = "Add", color = MaterialTheme.colorScheme.primary)
                 }
 
             }
@@ -82,38 +163,35 @@ fun Task(viewModel: TaskViewModel, navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedTextField(
-                    value = title,
+                    value = "title",
 //                    onValueChange = {
 //                        if(task.title.length <= 20)  title = it else Toast.makeText(navController.context, "Title cannot be more than 20 characters", Toast.LENGTH_SHORT).show() },
-                    onValueChange = {
-                        if (it.length <= 20) {
-                            title = it
-                        } else {
-                            Toast.makeText(context, "Title cannot be more than 20 characters", Toast.LENGTH_SHORT).show()
-                        } },
-                    label = { Text(text = "title") },
+                    onValueChange = {},
+                    label = { Text(text = "Task") },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.background,
+                        focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+
+//                        focusedContainerColor  = MaterialTheme.colorScheme.background,
+//                        unfocusedContainerColor = Color.Blue
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    singleLine = true
                 )
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text(text = "details") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
+//                OutlinedTextField(
+//                    value = description,
+//                    onValueChange = { description = it },
+//                    label = { Text(text = "details") },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(8.dp)
+//                )
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     )
-
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-private fun TaskPreview() {
-
 }
