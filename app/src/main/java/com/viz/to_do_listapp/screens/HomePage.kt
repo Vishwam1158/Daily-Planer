@@ -1,15 +1,21 @@
 package com.viz.to_do_listapp.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.viz.to_do_listapp.R
+import com.viz.to_do_listapp.roomDB.Category
 import com.viz.to_do_listapp.ui.theme.DarkPrimaryTint
 import com.viz.to_do_listapp.ui.theme.LightPrimaryTint
 
@@ -42,8 +48,59 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: 
     var taskList by remember { mutableStateOf(listOf<Task>()) }
     viewModel.getTasks().observe(LocalLifecycleOwner.current) { taskList = it }
 
+    var categoryList by remember { mutableStateOf(listOf<Category>()) }
+    viewModel.getCategories().observe(LocalLifecycleOwner.current) { categoryList = it }
+
+    //for vertical scroll categories list
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+//            .verticalScroll(rememberScrollState()),
+    ) {
+
+//        LazyColumn {
+//            items(taskList) { task ->
+//                AddTask(
+//                    task = task,
+//                    categories = categoryList,
+////                    onTaskCompletionToggle = { updatedTask ->
+////                        viewModel.toggleTaskCompletion(updatedTask)
+////                    },
+////                    onTaskUpdate = { updatedTask ->
+////                        viewModel.upsertTask(updatedTask)
+////                    }
+//            }
+//        }
+
+        LazyRow {
+            items(categoryList) {category ->
+
+                Row {
+                    Button(
+                        modifier = Modifier.padding(4.dp),
+                        onClick = { viewModel.deleteCategory(category) },
+                        shape = RoundedCornerShape(12),
+                        colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(3.dp),
+                            text =  category.name ,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     Column(
-        modifier = Modifier.padding(top = 16.dp, bottom = 94.dp, start = 16.dp, end = 16.dp).background( MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .padding(top = 16.dp, bottom = 94.dp, start = 16.dp, end = 16.dp)
+            .background(MaterialTheme.colorScheme.background),
 //        verticalArrangement = Arrangement.spacedBy(12.dp)
 
     ) {
@@ -67,7 +124,7 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: 
                             },
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding(start = 20.dp, )
+                                .padding(start = 20.dp,)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.task_round),
@@ -126,7 +183,7 @@ private fun TempPreview() {
                 },
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 20.dp, )
+                    .padding(start = 20.dp,)
 //                    .size(64.dp),
             ) {
                 Icon(
@@ -155,6 +212,30 @@ private fun TempPreview() {
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 78.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomePagePreview() {
+    Row {
+
+        Button(
+            modifier = Modifier.padding(4.dp),
+            onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(12),
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(3.dp),
+                text = " category.name ",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
             )
         }
     }
