@@ -8,6 +8,7 @@ data class Task (
     val title: String,
     val description: String,
     val isComplete: Boolean = false,
+    val categoryId: Int,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )
