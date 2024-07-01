@@ -15,4 +15,12 @@ interface RoomDao {
     @Query("SELECT * FROM task")
     fun getAllTasks(): Flow<List<Task>>
 
+    @Upsert
+    suspend fun upsertCategory(category: Category)
+    @Delete
+    suspend fun deleteCategory(category: Category)
+    @Query("SELECT * FROM category")
+    fun getAllCategories(): Flow<List<Category>>
+
+
 }
