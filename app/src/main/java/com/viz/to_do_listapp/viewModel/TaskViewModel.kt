@@ -9,6 +9,9 @@ import kotlinx.coroutines.launch
 
 class TaskViewModel(private val repository: Repository): ViewModel() {
     fun getTasks() = repository.getAllTasks().asLiveData(viewModelScope.coroutineContext)
+    fun getCategories() = repository.getAllCategories().asLiveData(viewModelScope.coroutineContext)
+    fun getTasksByCategory(categoryId: Int) = repository.getTasksByCategory(categoryId).asLiveData(viewModelScope.coroutineContext)
+
 
     fun upsertTask(task: Task){
         viewModelScope.launch {
@@ -27,7 +30,6 @@ class TaskViewModel(private val repository: Repository): ViewModel() {
         upsertTask(updatedTask)
     }
 
-    fun getCategories() = repository.getAllCategories().asLiveData(viewModelScope.coroutineContext)
 
     fun upsertCategory(category: Category){
         viewModelScope.launch {
