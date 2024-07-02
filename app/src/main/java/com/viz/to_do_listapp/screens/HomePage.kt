@@ -3,25 +3,35 @@ package com.viz.to_do_listapp.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,59 +48,84 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.viz.to_do_listapp.R
 import com.viz.to_do_listapp.roomDB.Category
 import com.viz.to_do_listapp.ui.theme.DarkPrimaryTint
 import com.viz.to_do_listapp.ui.theme.LightPrimaryTint
 
 @Composable
-fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: NavController
-    var taskList by remember { mutableStateOf(listOf<Task>()) }
-    viewModel.getTasks().observe(LocalLifecycleOwner.current) { taskList = it }
+fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
+    val allTasks by viewModel.getTasks().observeAsState(emptyList())
+    val userCategories by viewModel.getCategories().observeAsState(emptyList())
 
-    var categoryList by remember { mutableStateOf(listOf<Category>()) }
-    viewModel.getCategories().observe(LocalLifecycleOwner.current) { categoryList = it }
+    // Add the default "All Tasks" category
+    val defaultCategory = Category(id = -1, name = "All Tasks", ) // Assuming you have an icon resource ID for "All Tasks"
+    val categoryList = listOf(defaultCategory) + userCategories
 
-    //for vertical scroll categories list
+    var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
+
+    // Fetch tasks for the selected category
+    val taskList = if (selectedCategoryId != null && selectedCategoryId != -1) {
+        viewModel.getTasksByCategory(selectedCategoryId!!).observeAsState(emptyList()).value
+    } else {
+        allTasks
+    }
+
+    // For vertical scroll categories list
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-//            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxWidth()
     ) {
-
-//        LazyColumn {
-//            items(taskList) { task ->
-//                AddTask(
-//                    task = task,
-//                    categories = categoryList,
-////                    onTaskCompletionToggle = { updatedTask ->
-////                        viewModel.toggleTaskCompletion(updatedTask)
-////                    },
-////                    onTaskUpdate = { updatedTask ->
-////                        viewModel.upsertTask(updatedTask)
-////                    }
-//            }
-//        }
-
         LazyRow {
-            items(categoryList) {category ->
-
-                Row {
+            items(categoryList) { category ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(
                         modifier = Modifier.padding(4.dp),
-                        onClick = { viewModel.deleteCategory(category) },
+                        onClick = {
+                            selectedCategoryId = if (category.id == -1) null else category.id
+                        },
                         shape = RoundedCornerShape(12),
-                        colors = ButtonDefaults.buttonColors(Color.Transparent),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                        colors = if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
+                            ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+                        } else {
+                            ButtonDefaults.buttonColors(Color.Transparent)
+                        },
+                        border = BorderStroke(1.dp, if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        })
                     ) {
                         Text(
-                            modifier = Modifier
-                                .padding(3.dp),
-                            text =  category.name ,
-                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(1.dp),
+                            text = category.name,
+                            color = if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
+
+                        // Show delete button only for user-created categories
+                        if (category.id != -1) {
+                            IconButton(
+                                onClick = {
+                                    viewModel.deleteCategory(category)
+                                    if (selectedCategoryId == category.id) {
+                                        selectedCategoryId =
+                                            null // Reset to "All Tasks" if the selected category is deleted
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
+                                    contentDescription = "Delete Category",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -101,8 +136,6 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: 
         modifier = Modifier
             .padding(top = 16.dp, bottom = 94.dp, start = 16.dp, end = 16.dp)
             .background(MaterialTheme.colorScheme.background),
-//        verticalArrangement = Arrangement.spacedBy(12.dp)
-
     ) {
         LazyColumn {
             items(taskList) { task ->
@@ -122,9 +155,7 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: 
                             onClick = {
                                 viewModel.toggleTaskCompletion(task)
                             },
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(start = 20.dp,)
+                            modifier = Modifier.align(Alignment.TopStart).padding(start = 20.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.task_round),
@@ -138,17 +169,12 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) { //, navController: 
                                 painter = painterResource(R.drawable.task_tick),
                                 contentDescription = null,
                                 colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
-                                modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .padding(start = 30.dp, top = 4.dp)
-                                    .size(34.dp)
+                                modifier = Modifier.align(Alignment.TopStart).padding(start = 30.dp, top = 4.dp).size(34.dp)
                             )
                         }
 
                         Text(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 78.dp),
+                            modifier = Modifier.align(Alignment.CenterStart).padding(start = 78.dp),
                             text = task.title,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
