@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [Task::class], version = 1)
+@Database(entities = [Task::class, Category::class], version = 1)
 abstract class TaskDatabase: RoomDatabase() {
     abstract val dao: RoomDao
 
