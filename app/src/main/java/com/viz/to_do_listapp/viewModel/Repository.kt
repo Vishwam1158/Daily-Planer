@@ -25,4 +25,6 @@ class Repository(private val db : TaskDatabase) {
     }
 
     fun getAllCategories() = db.dao.getAllCategories()
+    fun getTasksByCategory(categoryId: Int) = db.dao.getTasksByCategory(categoryId)
+
 }
