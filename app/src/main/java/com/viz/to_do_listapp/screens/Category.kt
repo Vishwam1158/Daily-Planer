@@ -88,10 +88,10 @@ fun AddCategory(viewModel: TaskViewModel, navController: NavController) {
                     OutlinedTextField(
                         value = categoryName,
                         onValueChange = {
-                            if (it.length <= 10) {
+                            if (it.length <= 15) {
                                 categoryName = it
                             } else {
-                                Toast.makeText(context, "Title cannot be more than 10 characters", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Title cannot be more than 15 characters", Toast.LENGTH_SHORT).show()
                             }
                         },
                         label = { Text(text = "Category Name") },
