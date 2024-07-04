@@ -1,7 +1,7 @@
 package com.viz.to_do_listapp
 
 import android.os.Bundle
-import com.newrelic.agent.android.NewRelic
+//import com.newrelic.agent.android.NewRelic
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.viz.to_do_listapp.roomDB.TaskDatabase
-import com.viz.to_do_listapp.ui.theme.ToDOlistAppTheme
+import com.viz.to_do_listapp.ui.theme.ToDoListAppTheme
 import com.viz.to_do_listapp.viewModel.Repository
 import com.viz.to_do_listapp.viewModel.TaskViewModel
 
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             TaskDatabase::class.java,
-            "todolist2.db"
+            "todolist3.db"
         ).build()
     }
     private val viewModel by viewModels<TaskViewModel>( // In the viewModel we pass repository so here we use factory producer
@@ -41,16 +41,16 @@ class MainActivity : ComponentActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        NewRelic.withApplicationToken(
-            "AAd89327b71b784e1d20f265c8562218d9226a5f74-NRMA"
-        ).start(this.applicationContext)
+//        NewRelic.withApplicationToken(
+//            "AAd89327b71b784e1d20f265c8562218d9226a5f74-NRMA"
+//        ).start(this.applicationContext)
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
 
-            var darkTheme by remember { mutableStateOf(false) }
-            ToDOlistAppTheme(darkTheme) {
+            var darkTheme by remember { mutableStateOf(true) }
+            ToDoListAppTheme(darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
