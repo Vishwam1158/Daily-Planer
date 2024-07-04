@@ -216,10 +216,10 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories: 
                 OutlinedTextField(
                     value = title,
                     onValueChange = {
-                        if (it.length <= 25) {
+                        if (it.length <= 30) {
                             title = it
                         } else {
-                            Toast.makeText(context, "Title cannot be more than 25 characters", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Title cannot be more than 30 characters", Toast.LENGTH_SHORT).show()
                         }
                     },
                     label = { Text(text = "Task") },
