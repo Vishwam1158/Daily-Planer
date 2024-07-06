@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -34,7 +32,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +45,6 @@ import com.viz.to_do_listapp.Routes
 import com.viz.to_do_listapp.transform
 import com.viz.to_do_listapp.ui.theme.DarkPrimaryTint
 import com.viz.to_do_listapp.ui.theme.DarkSecondaryTint
-import com.viz.to_do_listapp.ui.theme.LightPrimaryText
 import com.viz.to_do_listapp.ui.theme.LightPrimaryTint
 import com.viz.to_do_listapp.ui.theme.LightSecondaryTint
 import kotlin.math.PI
@@ -115,42 +114,6 @@ fun BottomAppBar(
 
 }
 
-
-//@Composable
-//fun BottomAppBar(selectedRoute: String = Routes.Home.route, onChange: (String)->Unit = {}) {
-//
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        modifier = Modifier
-//            .height(90.dp)
-//            .paint(
-//                painter = painterResource(R.drawable.temp2),
-//                contentScale = ContentScale.FillHeight,
-//                alignment = Alignment.Center
-//            )
-//            .padding(horizontal = 40.dp)
-//
-//    ) {
-////        listOf( Icons.Filled.Home,Icons.Filled.Call).map { image ->
-////            IconButton(onClick = { }) {
-////                Icon(imageVector = image, contentDescription = null, tint = Color.White)
-////            }
-////        }
-//        for (page in Routes.pages) {
-//            NavBarItem(
-//                page = page,
-//                selected = selectedRoute == page.route,
-//                modifier = Modifier
-//                    .clickable {
-//                        onChange(page.route)
-//                    }
-//            )
-//        }
-//    }
-//}
-
-
 @Composable
 fun NavBarItem(
     modifier: Modifier = Modifier,
@@ -191,6 +154,9 @@ fun NavBarItem(
 fun AnimatedFab(
     modifier: Modifier,
     icon: Painter? = null,
+//    icon: ImageVector? = null,
+    title: String ,
+    color: Color = MaterialTheme.colorScheme.background,
     opacity: Float = 1f,
     backgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     onClick : () -> Unit = {}
@@ -205,12 +171,24 @@ fun AnimatedFab(
 
     ) {
         icon?.let {
-            Icon(
-                painter = it,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outlineVariant.copy(alpha = opacity),
-                modifier = Modifier.size(32.dp)
-            )
+            Column(
+                modifier = Modifier.padding(top = 3.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = it,
+//                imageVector = it,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outlineVariant.copy(alpha = opacity),
+                    modifier = Modifier.size(32.dp)
+                )
+                Text(
+                    text = title,
+                    fontSize = 8.sp,
+                    color = color
+                )
+            }
         }
     }
 }
@@ -234,6 +212,8 @@ fun FabGroup(
 
         AnimatedFab(
             icon = painterResource(id = R.drawable.categories),
+//            icon = Icons.Default.Category,
+            title = "Category",
             modifier = Modifier
                 .padding(
                     PaddingValues(
@@ -257,6 +237,8 @@ fun FabGroup(
 
         AnimatedFab(
             icon = painterResource(id = R.drawable.list),
+//            icon = Icons.Default.Checklist,
+            title = "Task",
             modifier = Modifier.padding(
                 PaddingValues(
                     bottom = 64.dp * FastOutSlowInEasing.transform(0.2f, 1.2f, animationProgress), // 0.2 to 1.0
@@ -270,9 +252,12 @@ fun FabGroup(
 
         AnimatedFab(
             icon = painterResource(id = R.drawable.plus),
+//            icon = Icons.Outlined.Add,
+            title = "",
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .rotate(
-                    225 * FastOutSlowInEasing
+                    45 * FastOutSlowInEasing
                         .transform(0.35f, 0.65f, animationProgress)
                 ),
             onClick = toggleAnimation,
@@ -289,7 +274,7 @@ fun Circle(color: Color, animationProgress: Float) {
 
     Box(
         modifier = Modifier
-            .padding(42.dp) //set floating button's background circle position
+            .padding(45.dp) //set floating button's background circle position
             .size(56.dp)
             .scale(2 - animationValue)
             .border(
@@ -304,9 +289,9 @@ fun Circle(color: Color, animationProgress: Float) {
 @Composable
 @Preview(showBackground = true)
 private fun CustomBottomNavigationPreview() {
-    BottomAppBar(onChange = {}, darkTheme = false)
-    AnimatedFab(modifier = Modifier.scale(1.25f),)
-//    FabGroup(navController = NavController(LocalContext.current))
+//    BottomAppBar(onChange = {}, darkTheme = false)
+//    AnimatedFab(modifier = Modifier.scale(1.25f),)
+    FabGroup(navController = NavController(LocalContext.current))
 }
 
 
