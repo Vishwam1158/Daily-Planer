@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.viz.to_do_listapp.animation.AnimationScreen
-import com.viz.to_do_listapp.animation.BottomAppBar
 import com.viz.to_do_listapp.screens.Calendar
 import com.viz.to_do_listapp.screens.HomePage
 import com.viz.to_do_listapp.screens.TopAppBar
@@ -32,17 +31,6 @@ fun App(
         topBar = {
             TopAppBar(darkTheme, onThemeUpdated)
         },
-//        bottomBar = {
-//            BottomAppBar(
-//                selectedRoute = selectedRoute.value,
-//                onChange = { route ->
-//                    selectedRoute.value = route
-//                }
-//            )
-//        },
-//        content = {
-//            Box(modifier = Modifier.padding(it)) {}
-//        }
     ) {
         Column(modifier = Modifier.padding(it)) {
             when (selectedRoute.value) {
@@ -56,18 +44,12 @@ fun App(
     Box(
         Modifier
             .fillMaxSize()
-            .padding(bottom = 16.dp), //24.dp
-        contentAlignment = Alignment.BottomCenter
+            .padding(top = 160.dp), //24.dp
+        contentAlignment = Alignment.BottomEnd
     ) {
 
-            BottomAppBar(
-                selectedRoute = selectedRoute.value,
-                onChange = { route ->
-                    selectedRoute.value = route
-                },
-                darkTheme = darkTheme
-            )
-            AnimationScreen(navController = navController) // viewModel)
+        AnimationScreen(navController = navController) // viewModel)
+
     }
 }
 
