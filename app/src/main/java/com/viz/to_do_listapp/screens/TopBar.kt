@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -18,10 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,40 +34,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.viz.to_do_listapp.R
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun TopAppBar( darkTheme: Boolean, onThemeUpdate : () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 36.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+            .padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
             .background(MaterialTheme.colorScheme.background),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.menu),
-            contentDescription = "menu button",
-            modifier = Modifier.size(32.dp, 32.dp)
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "menu button",
-            modifier = Modifier.size(32.dp, 32.dp)
-        )
-        ThemeSwitcher(
-            darkTheme = darkTheme,
-            size = 32.dp,
-            padding = 3.dp,
-            onClick = onThemeUpdate
-        )
+        Text(
+            text = "TO - DO List",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+//            modifier = Modifier.padding(start = 16.dp)
+            )
+
+        Row{
+            ThemeSwitcher(
+                darkTheme = darkTheme,
+                size = 32.dp,
+                padding = 3.dp,
+                onClick = onThemeUpdate
+            )
+
+            Spacer(modifier = Modifier.padding(start = 8.dp))
+            Icon(
+                imageVector = Icons.Filled.FilterList,
+                contentDescription = "Filter List",
+                modifier = Modifier.size(32.dp, 32.dp)
+            )
+        }
     }
 }
 
@@ -148,10 +157,4 @@ private fun TopAppBarPreview() {
     var darkTheme by remember { mutableStateOf(false) }
 
     TopAppBar(darkTheme = darkTheme, onThemeUpdate = { darkTheme = !darkTheme })
-    ThemeSwitcher(
-        darkTheme = darkTheme,
-        size = 32.dp,
-        padding = 3.dp,
-        onClick = {}
-    )
 }
