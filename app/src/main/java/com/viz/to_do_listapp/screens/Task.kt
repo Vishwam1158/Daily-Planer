@@ -66,7 +66,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
     var title by remember { mutableStateOf("") } // don't put " " always put "" as value, try it and placeholder boom!!
     var description by remember { mutableStateOf("") }
     val context = LocalContext.current
-//
+
     var selectedCategoryId by remember { mutableStateOf(1) }
     var selectedCategoryName by remember { mutableStateOf("Category") }
     val task = Task(title, description, categoryId = selectedCategoryId)
@@ -79,7 +79,6 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             .fillMaxSize()
             .padding(start = 24.dp, end = 24.dp, top = 36.dp, bottom = 24.dp)
             .background(MaterialTheme.colorScheme.background),
-//        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -114,7 +113,6 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             ),
             modifier = Modifier
                 .fillMaxWidth()
-//                .padding(horizontal = 24.dp)
                 .background(Color.Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
@@ -144,7 +142,6 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             ),
             modifier = Modifier
                 .fillMaxWidth()
-//                .padding(horizontal = 24.dp)
                 .background(Color.Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
@@ -176,7 +173,6 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                 expanded = isExpanded,
                 onDismissRequest = {
                     isExpanded = false
-//                                       categoryId = selectedCategoryId
                 },
             ) {
                 categories.forEach { category ->
@@ -227,174 +223,3 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             )
     }
 }
-
-
-// NewTask but plceholder problem
-//@Composable
-//fun AddTask(viewModel: TaskViewModel, navController: NavController, categories : List<Category>) {
-//
-//    var title by remember { mutableStateOf(" ") }
-//    var description by remember { mutableStateOf(" ") }
-//    val context = LocalContext.current
-//
-//    var selectedCategoryId by remember { mutableStateOf(1) }
-//    var selectedCategoryName by remember { mutableStateOf("Category") }
-//    val task = Task(title, description, categoryId = selectedCategoryId)
-//    var isExpanded by remember { mutableStateOf(false) }
-//
-////    var status by remember { mutableStateOf(showDialogBox) }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//
-//
-//        TextField(
-//            value = title,
-//            onValueChange ={
-//                if (it.length <= 25) {
-//                title = it
-//                } else {
-//                    Toast.makeText(
-//                        context,
-//                        "Title cannot be more than 25 characters",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//                           } ,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .heightIn(min = 56.dp)
-//                .padding(horizontal = 16.dp),
-//               //.background(Color.Transparent),
-//            placeholder = { Text(text = " Add Task ", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight(600), fontSize = 21.sp) },
-////            label = { Text(text = "Task") },
-//
-////            colors = TextFieldDefaults.colors(MaterialTheme.colorScheme.onBackground),
-//            colors = TextFieldDefaults.colors(
-//                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-//                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-////                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-//                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground, // Underline Color
-//                cursorColor = MaterialTheme.colorScheme.onBackground,
-//                focusedContainerColor = Transparent,  // Background color
-//                unfocusedContainerColor = Transparent,
-//            ),
-//
-////            focusedIndicatorColor = Color.Transparent, // Hide the focused indicator
-////            unfocusedIndicatorColor = Color.Transparent,
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-//            singleLine = true,
-//        )
-//        Spacer(modifier = Modifier.padding(6.dp))
-//
-//        TextField(
-//            value = description,
-//            onValueChange = { description = it },
-//            placeholder = { Text(text = " Add Description (optional) ", fontWeight = FontWeight(600), fontSize = 21.sp) },
-////            modifier = Modifier
-////                .height(100.dp)
-////                .fillMaxWidth()
-////                .heightIn(min = 56.dp)
-////                .padding(horizontal = 16.dp),
-//            colors = TextFieldDefaults.colors(
-//                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground, // Underline Color
-//                cursorColor = MaterialTheme.colorScheme.onBackground,
-//                focusedContainerColor = Transparent,  // Background color
-//                unfocusedContainerColor = Transparent,
-//                focusedPlaceholderColor = Color.Red,
-//                unfocusedPlaceholderColor = Color.Yellow
-//            )
-//        )
-//
-//
-//        Column(
-//            modifier = Modifier.padding(16.dp),
-//        ) {
-//
-//            Box(
-//                modifier = Modifier.fillMaxWidth(),
-////                    contentAlignment = Alignment.TopEnd
-//            ) {
-//                Button(
-//                    onClick = { isExpanded = !isExpanded },
-////                        modifier = Modifier.align(Alignment.End),
-//                    shape = RoundedCornerShape(12),
-//                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-//                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
-//                ) {
-//                    Text(
-//                        text = selectedCategoryName,
-//                        color = MaterialTheme.colorScheme.onBackground
-//                    )
-//                }
-//                DropdownMenu(
-//                    modifier = Modifier.align(Alignment.TopEnd),
-//                    expanded = isExpanded,
-//                    onDismissRequest = {
-//                        isExpanded = false
-////                                       categoryId = selectedCategoryId
-//                    },
-//                    content = {
-//                        categories.forEach { category ->
-//                            DropdownMenuItem(
-//                                text = { Text(text = category.name) },
-//                                onClick = {
-//                                    selectedCategoryId = category.id
-//                                    selectedCategoryName = category.name
-//                                    isExpanded = false
-//                                },
-//                                modifier = Modifier.border(
-//                                    1.dp, MaterialTheme.colorScheme.onBackground
-//                                )//, RoundedCornerShape(12))
-////                                        .align(Alignment.End)
-//                            )
-//                        }
-//                    },
-////                    modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.onBackground)
-//                )
-//
-//
-////        containerColor = MaterialTheme.colorScheme.background
-//            }
-//
-//        }
-//
-//
-//        // Add and Cancel button
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(8.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//
-//            Button(
-//                onClick = { navController.navigate(Routes.App) },
-//                shape = RoundedCornerShape(12),
-//                colors = ButtonDefaults.buttonColors(Color.Transparent),
-//                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
-//            ) {
-//                Text(text = "Cancel", color = MaterialTheme.colorScheme.onBackground)
-//            }
-//            Button(
-//                onClick = {
-//                    if (task.title.isNotBlank()) {
-//                        viewModel.upsertTask(task)
-//                        navController.navigate(Routes.App)
-//                    } else Toast.makeText(context, "Please enter a title", Toast.LENGTH_SHORT)
-//                        .show()
-//                },
-//                shape = RoundedCornerShape(12),
-//                colors = ButtonDefaults.buttonColors(Color.Transparent),
-//                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
-//            ) {
-//                Text(text = "Add", color = MaterialTheme.colorScheme.onBackground)
-//            }
-//
-//        }
-//    }
-//}
