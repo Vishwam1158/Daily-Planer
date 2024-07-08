@@ -3,12 +3,13 @@ package com.viz.to_do_listapp.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -19,17 +20,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -37,20 +38,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import com.viz.to_do_listapp.roomDB.Task
 import com.viz.to_do_listapp.viewModel.TaskViewModel
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.viz.to_do_listapp.R
-import com.viz.to_do_listapp.roomDB.Category
+import com.viz.to_do_listapp.Model.Category
 import com.viz.to_do_listapp.ui.theme.DarkPrimaryTint
 import com.viz.to_do_listapp.ui.theme.LightPrimaryTint
 
@@ -60,10 +59,14 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
     val userCategories by viewModel.getCategories().observeAsState(emptyList())
 
     // Add the default "All Tasks" category
-    val defaultCategory = Category(id = -1, name = "All Tasks", ) // Assuming you have an icon resource ID for "All Tasks"
+    val defaultCategory = Category(id = -1, name = "All Tasks",) // Assuming you have an icon resource ID for "All Tasks"
     val categoryList = listOf(defaultCategory) + userCategories
 
     var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    var categoryToDelete by remember { mutableStateOf<Category?>(null) }
+
+
 
     // Fetch tasks for the selected category
     val taskList = if (selectedCategoryId != null && selectedCategoryId != -1) {
@@ -72,11 +75,15 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
         allTasks
     }
 
-    // For vertical scroll categories list
-    Row(
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
     ) {
-        LazyRow {
+        // For vertical scroll categories list
+        LazyRow(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             items(categoryList) { category ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(
@@ -86,12 +93,12 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
                         },
                         shape = RoundedCornerShape(12),
                         colors = if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
-                            ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+                            ButtonDefaults.buttonColors( MaterialTheme.colorScheme.onBackground)
                         } else {
                             ButtonDefaults.buttonColors(Color.Transparent)
                         },
                         border = BorderStroke(1.dp, if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
-                            MaterialTheme.colorScheme.primary
+                            MaterialTheme.colorScheme.background
                         } else {
                             MaterialTheme.colorScheme.onBackground
                         })
@@ -100,86 +107,346 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
                             modifier = Modifier.padding(1.dp),
                             text = category.name,
                             color = if (selectedCategoryId == category.id || (selectedCategoryId == null && category.id == -1)) {
-                                MaterialTheme.colorScheme.onPrimary
+                                MaterialTheme.colorScheme.background
                             } else {
                                 MaterialTheme.colorScheme.onBackground
                             },
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
+                    }
+                }
+            }
+        }
 
-                        // Show delete button only for user-created categories
-                        if (category.id != -1) {
-                            IconButton(
-                                onClick = {
-                                    viewModel.deleteCategory(category)
-                                    if (selectedCategoryId == category.id) {
-                                        selectedCategoryId =
-                                            null // Reset to "All Tasks" if the selected category is deleted
+        // Show delete button if a user-created category is selected
+        if (selectedCategoryId != null && selectedCategoryId != -1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                IconButton(
+                    onClick = {
+                        val tasksInCategory = taskList.filter { it.categoryId == selectedCategoryId }
+                        val categoryToDeleteTemp = categoryList.find { it.id == selectedCategoryId }
+                        if (tasksInCategory.isEmpty()) {
+                            // Directly delete the category if it has no tasks
+                            if (categoryToDeleteTemp != null) {
+                                viewModel.deleteCategory(categoryToDeleteTemp)
+                                selectedCategoryId = null // Reset to "All Tasks" if the selected category is deleted
+                            }
+                        } else {
+                            // Show dialog to confirm deletion of category with tasks
+                            categoryToDelete = categoryToDeleteTemp
+                            showDialog = true
+                        }
+                    },
+                    modifier = Modifier.size(width = 90.dp, height = 30.dp)
+                ) {
+                    Row(
+//                        modifier = Modifier.size(width = 200.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Delete",
+//                          style = MaterialTheme.typography.h6,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
+                            contentDescription = "Delete Category",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.heightIn(6.dp))
+                    }
+                }
+            }
+        }
+
+        // for Task container
+//        LazyColumn {
+//            items(taskList) { task ->
+//                Column(
+//                    Modifier.clickable { viewModel.deleteTask(task) }
+//                ) {
+//                    Box(
+//                        contentAlignment = Alignment.Center,
+//                    ) {
+//                        Image(
+//                            painter = painterResource(id = R.drawable.new_task_border),
+//                            contentDescription = "task border",
+//                            colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint)
+//                        )
+//
+//                        IconButton(
+//                            onClick = {
+//                                viewModel.toggleTaskCompletion(task)
+//                            },
+//                            modifier = Modifier
+//                                .align(Alignment.TopStart)
+//                                .padding(start = 20.dp)
+//                        ) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.task_round),
+//                                contentDescription = "Example Image",
+//                                modifier = Modifier.size(32.dp),
+//                                tint = if (darkTheme) DarkPrimaryTint else LightPrimaryTint
+//                            )
+//                        }
+//                        if (task.isComplete) {
+//                            Image(
+//                                painter = painterResource(R.drawable.task_tick),
+//                                contentDescription = null,
+//                                colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
+//                                modifier = Modifier
+//                                    .align(Alignment.TopStart)
+//                                    .padding(start = 30.dp, top = 4.dp)
+//                                    .size(34.dp)
+//                            )
+//                        }
+//
+//                        Text(
+//                            modifier = Modifier
+//                                .align(Alignment.CenterStart)
+//                                .padding(start = 78.dp),
+//                            text = task.title,
+//                            fontSize = 20.sp,
+//                            fontWeight = FontWeight.SemiBold,
+//
+//                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
+//                            textDecoration = if (task.isComplete) TextDecoration.LineThrough  else TextDecoration.None
+//                        )
+//                    }
+//                }
+//            }
+//        }
+
+        LazyColumn {
+            items(taskList) { task ->
+                Column(
+//                    Modifier.clickable {  }
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+//                            colors = CardDefaults.cardColors(Color.Transparent),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.Transparent)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .padding(4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.TopStart,
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                viewModel.toggleTaskCompletion(task)
+                                            },
+                                            modifier = Modifier
+                                                .padding(start = 4.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.task_round),
+                                                contentDescription = "Example Image",
+                                                modifier = Modifier.size(32.dp),
+                                                tint = if (darkTheme) DarkPrimaryTint else LightPrimaryTint
+                                            )
+                                        }
+                                        if (task.isComplete) {
+                                            Image(
+                                                painter = painterResource(R.drawable.task_tick),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
+                                                modifier = Modifier
+                                                    .padding(start = 14.dp, top = 4.dp)
+                                                    .size(34.dp)
+                                            )
+                                        }
+                                    }
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(0.9f),
+                                        horizontalAlignment = Alignment.Start,
+                                    ) {
+                                        Text(
+                                            text = task.title,
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
+                                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None
+                                        )
+                                        Text(
+                                            text = task.description,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
+                                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = { viewModel.deleteTask(task)},
+                                        modifier = Modifier.size(width = 90.dp, height = 30.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
+                                            contentDescription = "Delete Category",
+                                            tint = MaterialTheme.colorScheme.onBackground
+                                        )
                                     }
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
-                                    contentDescription = "Delete Category",
-                                    tint = MaterialTheme.colorScheme.error
-                                )
                             }
                         }
                     }
                 }
             }
         }
+
+        // Dialog to confirm deletion of category with tasks
+        if (showDialog && categoryToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Delete Category") },
+                text = { Text("This category contain tasks. Are you sure you want to delete this category along with all its tasks?") },
+                confirmButton = {
+                    Row (modifier = Modifier
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Button(
+                            onClick = {
+                                // Delete category along with all its tasks
+                            val tasksInCategory = taskList.filter { it.categoryId == categoryToDelete!!.id }
+                            tasksInCategory.forEach { viewModel.deleteTask(it) }
+                            viewModel.deleteCategory(categoryToDelete!!)
+                            selectedCategoryId = null // Reset to "All Tasks"
+                            showDialog = false
+                            },
+                            shape = RoundedCornerShape(12),
+                            colors = ButtonDefaults.buttonColors(Color.Transparent),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                        ) {
+                            Text(text = "Yes", color = MaterialTheme.colorScheme.onBackground)
+                        }
+                        Button(
+                            onClick = { showDialog = false },
+                            shape = RoundedCornerShape(12),
+                            colors = ButtonDefaults.buttonColors(Color.Transparent),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                        ) {
+                            Text(text = "No", color = MaterialTheme.colorScheme.onBackground)
+                        }
+
+                    }
+                }
+            )
+        }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+private fun TempPreview() {
+
 
     Column(
-        modifier = Modifier
-            .padding(top = 16.dp, bottom = 94.dp, start = 16.dp, end = 16.dp)
-            .background(MaterialTheme.colorScheme.background),
+        Modifier.clickable { }
     ) {
-        LazyColumn {
-            items(taskList) { task ->
-                Column(
-                    Modifier.clickable { viewModel.deleteTask(task) }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+//                backgroundColor = Color.Transparent,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Transparent)
+                        .clip(RoundedCornerShape(12.dp))
+                        .padding(16.dp)
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.new_task_border),
-                            contentDescription = "task border",
-                            colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint)
-                        )
-
+                    Row {
+                        Box{
+                            IconButton(
+                                onClick = {
+//                                viewModel.toggleTaskCompletion(task)
+                                },
+                                modifier = Modifier
+                                    .padding(start = 4.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.task_round),
+                                    contentDescription = "Example Image",
+                                    modifier = Modifier.size(32.dp),
+//                                tint = if (darkTheme) DarkPrimaryTint else LightPrimaryTint
+                                )
+                            }
+                            if (true) {
+                                Image(
+                                    painter = painterResource(R.drawable.task_tick),
+                                    contentDescription = null,
+//                                colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
+                                    modifier = Modifier
+                                        .padding(start = 14.dp, top = 4.dp)
+                                        .size(34.dp)
+                                )
+                            }
+                        }
+                        Column {
+                            Text(
+//                                modifier = Modifier
+//                                    .padding(start = 50.dp),
+                                text = "task.title",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+//                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
+//                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 50.dp),
+                                text = "task.title",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+//                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
+//                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None
+                            )
+                        }
                         IconButton(
                             onClick = {
-                                viewModel.toggleTaskCompletion(task)
+
                             },
-                            modifier = Modifier.align(Alignment.TopStart).padding(start = 20.dp)
+                            modifier = Modifier.size(width = 90.dp, height = 30.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.task_round),
-                                contentDescription = "Example Image",
-                                modifier = Modifier.size(32.dp),
-                                tint = if (darkTheme) DarkPrimaryTint else LightPrimaryTint
-                            )
-                        }
-                        if (task.isComplete) {
-                            Image(
-                                painter = painterResource(R.drawable.task_tick),
-                                contentDescription = null,
-                                colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
-                                modifier = Modifier.align(Alignment.TopStart).padding(start = 30.dp, top = 4.dp).size(34.dp)
+                                imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
+                                contentDescription = "Delete Category",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
 
-                        Text(
-                            modifier = Modifier.align(Alignment.CenterStart).padding(start = 78.dp),
-                            text = task.title,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None
-                        )
                     }
                 }
             }
@@ -188,81 +455,58 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-private fun TempPreview() {
-
-    Box(contentAlignment = Alignment.Center) {
-
-        Box(
-            contentAlignment = Alignment.Center,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.new_task_border),
-                contentDescription = ""
-            )
-
-            IconButton(
-                onClick = {
-//                    viewModel.toggleTaskCompletion(task)
-                },
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 20.dp,)
-//                    .size(64.dp),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.task_round),
-                    contentDescription = "Example Image",
-                    modifier = Modifier.size(32.dp),
-                    tint = Color.Black
-                )
-            }
-//            if (task.isComplete) {
-                Image(
-                    painter = painterResource(R.drawable.task_tick),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 30.dp, top = 4.dp)
-                        .size(34.dp)
-                )
-//            }
-
-            Text(
-                text = "Task Title",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-//                textDecoration = if (task.isComplete) TextDecoration.LineThrough else TextDecoration.None,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 78.dp)
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun HomePagePreview() {
-    Row {
+//    Row {
+//
+//        Button(
+//            modifier = Modifier.padding(4.dp),
+//            onClick = { /*TODO*/ },
+//            shape = RoundedCornerShape(12),
+//            colors = ButtonDefaults.buttonColors(Color.Transparent),
+//            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+//        ) {
+//            Text(
+//                modifier = Modifier
+//                    .padding(3.dp),
+//                text = " category.name ",
+//                color = MaterialTheme.colorScheme.primary,
+//                fontSize = 20.sp,
+//                fontWeight = FontWeight.SemiBold,
+//            )
+//        }
+//    }
 
-        Button(
-            modifier = Modifier.padding(4.dp),
-            onClick = { /*TODO*/ },
-            shape = RoundedCornerShape(12),
-            colors = ButtonDefaults.buttonColors(Color.Transparent),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 6.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+    IconButton(
+        onClick = {
+
+        },
+        modifier = Modifier.size(width = 90.dp, height = 30.dp)
+    ) {
+        Row(
+//                        modifier = Modifier.size(width = 200.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier
-                    .padding(3.dp),
-                text = " category.name ",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
+                text = "Delete",
+//                          style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Icon(
+                imageVector = Icons.Filled.Delete, // Replace with your delete icon resource
+                contentDescription = "Delete Category",
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
     }
 }
