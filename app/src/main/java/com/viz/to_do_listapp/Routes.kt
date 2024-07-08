@@ -1,18 +1,16 @@
 package com.viz.to_do_listapp
 
 
+
 object Routes {
     val App = "App"
     val Task = "task"
-    val category = "category"
-    val Home = NavPage("Home", R.drawable.home, "homeScreen")
-    val Calendar = NavPage("Calendar", R.drawable.calendar_filled, "calendarScreen")
-
-    val pages = listOf(Home, Calendar)
+    val Home = NavPage("Home", "homeScreen") //  R.drawable.home,
+//
 }
 
 data class NavPage(
     val name: String,
-    val icon: Int,
+//    val icon: Int,
     val route: String
 )
