@@ -26,7 +26,6 @@ fun App(
         },
         bottomBar = {
             CustomFloatingActionButton(
-                navController = navController,
                 onClick = { navController.navigate(Routes.Task) },
                 icon = Icons.Filled.Add
             )
