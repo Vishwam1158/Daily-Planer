@@ -168,64 +168,6 @@ fun HomePage(viewModel: TaskViewModel, darkTheme: Boolean) {
             }
         }
 
-        // for Task container
-//        LazyColumn {
-//            items(taskList) { task ->
-//                Column(
-//                    Modifier.clickable { viewModel.deleteTask(task) }
-//                ) {
-//                    Box(
-//                        contentAlignment = Alignment.Center,
-//                    ) {
-//                        Image(
-//                            painter = painterResource(id = R.drawable.new_task_border),
-//                            contentDescription = "task border",
-//                            colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint)
-//                        )
-//
-//                        IconButton(
-//                            onClick = {
-//                                viewModel.toggleTaskCompletion(task)
-//                            },
-//                            modifier = Modifier
-//                                .align(Alignment.TopStart)
-//                                .padding(start = 20.dp)
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.task_round),
-//                                contentDescription = "Example Image",
-//                                modifier = Modifier.size(32.dp),
-//                                tint = if (darkTheme) DarkPrimaryTint else LightPrimaryTint
-//                            )
-//                        }
-//                        if (task.isComplete) {
-//                            Image(
-//                                painter = painterResource(R.drawable.task_tick),
-//                                contentDescription = null,
-//                                colorFilter = ColorFilter.tint(if (darkTheme) DarkPrimaryTint else LightPrimaryTint),
-//                                modifier = Modifier
-//                                    .align(Alignment.TopStart)
-//                                    .padding(start = 30.dp, top = 4.dp)
-//                                    .size(34.dp)
-//                            )
-//                        }
-//
-//                        Text(
-//                            modifier = Modifier
-//                                .align(Alignment.CenterStart)
-//                                .padding(start = 78.dp),
-//                            text = task.title,
-//                            fontSize = 20.sp,
-//                            fontWeight = FontWeight.SemiBold,
-//
-//                            color = if (task.isComplete) Color.Gray else MaterialTheme.colorScheme.onBackground,
-//                            textDecoration = if (task.isComplete) TextDecoration.LineThrough  else TextDecoration.None
-//                        )
-//                    }
-//                }
-//            }
-//        }
-
         LazyColumn {
             items(taskList) { task ->
                 Column(
