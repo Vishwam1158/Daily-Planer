@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             TaskDatabase::class.java,
-            "todolist3.db"
+            "todolist4.db"
         ).build()
     }
     private val viewModel by viewModels<TaskViewModel>( // In the viewModel we pass repository so here we use factory producer
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            var darkTheme by remember { mutableStateOf(true) }
+            var darkTheme by remember { mutableStateOf(false) }
             ToDoListAppTheme(darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
