@@ -1,10 +1,15 @@
 package com.viz.to_do_listapp.viewModel
 
-import com.viz.to_do_listapp.roomDB.Category
-import com.viz.to_do_listapp.roomDB.Task
+import com.viz.to_do_listapp.Model.Category
+import com.viz.to_do_listapp.Model.Task
 import com.viz.to_do_listapp.roomDB.TaskDatabase
 
 class Repository(private val db : TaskDatabase) {
+
+    fun getAllCategories() = db.dao.getAllCategories()
+    fun getTasksByCategory(categoryId: Int) = db.dao.getTasksByCategory(categoryId)
+
+
     suspend fun upsertTask(task: Task) {
         db.dao.upsertTask(task)
     }
@@ -23,8 +28,5 @@ class Repository(private val db : TaskDatabase) {
     suspend fun deleteCategory(category: Category) {
         db.dao.deleteCategory(category)
     }
-
-    fun getAllCategories() = db.dao.getAllCategories()
-    fun getTasksByCategory(categoryId: Int) = db.dao.getTasksByCategory(categoryId)
 
 }
