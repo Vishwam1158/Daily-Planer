@@ -6,6 +6,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.viz.to_do_listapp.screens.CustomFloatingActionButton
@@ -20,9 +24,20 @@ fun App(
     darkTheme: Boolean,
     onThemeUpdated: () -> Unit
 ) {
+    var showSearch by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
-            TopAppBar(darkTheme, onThemeUpdated)
+            TopAppBar(
+                darkTheme,
+                onThemeUpdated,
+                onFilterClick = { filterOption ->
+                    viewModel.applyFilter(filterOption)
+                },
+                onSearchClick = {
+                    showSearch = true
+                }
+            )
         },
         bottomBar = {
             CustomFloatingActionButton(
@@ -32,11 +47,12 @@ fun App(
         },
         content = {
             Column(
-                modifier = Modifier.padding((it))
+                modifier = Modifier.padding(it)
             ) {
-                HomePage(viewModel = viewModel, darkTheme = darkTheme)
+                HomePage(viewModel = viewModel, darkTheme = darkTheme, showSearch = showSearch) {
+                    showSearch = false
+                }
             }
         }
-
     )
 }
