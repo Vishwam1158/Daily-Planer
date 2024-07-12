@@ -3,7 +3,6 @@ package com.viz.to_do_listapp.screens
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -58,8 +56,8 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
     var description by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    var selectedCategoryId by remember { mutableStateOf(1) }
-    var selectedCategoryName by remember { mutableStateOf("Category") }
+    var selectedCategoryId by remember { mutableStateOf(-1) }
+    var selectedCategoryName by remember { mutableStateOf("All Tasks") }
     var isExpanded by remember { mutableStateOf(false) }
     var showNewCategoryField by remember { mutableStateOf(false) }
     var newCategoryName by remember { mutableStateOf("") }
@@ -109,7 +107,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Transparent),
+                .background(Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
         )
@@ -139,7 +137,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Transparent),
+                .background(Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
         )
@@ -158,30 +156,29 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                 fontWeight = FontWeight(600),
                 fontSize = 18.sp
             )
-            Button(
-                onClick = { isExpanded = !isExpanded },
-                shape = RoundedCornerShape(12),
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-                border = BorderStroke(1.dp, Color.Transparent),
-            ) {
-                Text(
-                    text = selectedCategoryName,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Drop Down Arrow",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            Box {
+                Button(
+                    onClick = { isExpanded = !isExpanded },
+                    shape = RoundedCornerShape(12),
+                    colors = ButtonDefaults.buttonColors(Transparent),
+                    border = BorderStroke(1.dp, Transparent),
+                ) {
+                    Text(
+                        text = selectedCategoryName,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = "Drop Down Arrow",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
 
 
                 DropdownMenu(
                     expanded = isExpanded,
-                    onDismissRequest = {
-                        isExpanded = false
-                    },
+                    onDismissRequest = { isExpanded = false },
                     modifier = Modifier.padding(4.dp)
                 ) {
                     categories.forEach { category ->
@@ -200,6 +197,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                         )
                     }
                 }
+            }
 
 
             IconButton(
@@ -251,7 +249,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .background(Color.Transparent),
+                        .background(Transparent),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     singleLine = true
                 )
