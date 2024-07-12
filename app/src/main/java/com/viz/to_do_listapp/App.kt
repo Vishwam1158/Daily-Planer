@@ -35,7 +35,7 @@ fun App(
                     viewModel.applyFilter(filterOption)
                 },
                 onSearchClick = {
-                    showSearch = true
+                    showSearch = !showSearch
                 }
             )
         },
