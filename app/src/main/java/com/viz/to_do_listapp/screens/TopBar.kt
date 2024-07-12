@@ -22,10 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Nightlight
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +39,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TopAppBar( darkTheme: Boolean, onThemeUpdate : () -> Unit) {
+fun TopAppBar(darkTheme: Boolean, onThemeUpdate: () -> Unit, onFilterClick: (FilterOption) -> Unit, onSearchClick: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,11 +59,10 @@ fun TopAppBar( darkTheme: Boolean, onThemeUpdate : () -> Unit) {
             text = "TO - DO List",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-//            modifier = Modifier.padding(start = 16.dp)
-            )
+            color = MaterialTheme.colorScheme.onBackground
+        )
 
-        Row{
+        Row {
             ThemeSwitcher(
                 darkTheme = darkTheme,
                 size = 32.dp,
@@ -68,14 +71,63 @@ fun TopAppBar( darkTheme: Boolean, onThemeUpdate : () -> Unit) {
             )
 
             Spacer(modifier = Modifier.padding(start = 8.dp))
-            Icon(
-                imageVector = Icons.Filled.FilterList,
-                contentDescription = "Filter List",
-                modifier = Modifier.size(32.dp, 32.dp)
-            )
+
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    imageVector = Icons.Filled.FilterList,
+                    contentDescription = "Filter List",
+                    modifier = Modifier.size(32.dp, 32.dp)
+                )
+            }
+
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onFilterClick(FilterOption.Priority)
+                },
+                    text = {Text("Sort by Priority")}
+                )
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onFilterClick(FilterOption.Completed)
+                },
+                    text = {                     Text("Completed Tasks")
+                    }
+                )
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onFilterClick(FilterOption.Incompleted)
+                },
+                    text = {                    Text("Incompleted Tasks")
+                    }
+                )
+
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onFilterClick(FilterOption.Alphabet)
+                },
+                    text = {Text("Sort Alphabetically")}
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(start = 8.dp))
+
+            IconButton(onClick = onSearchClick) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search Tasks",
+                    modifier = Modifier.size(32.dp, 32.dp)
+                )
+            }
         }
     }
 }
+
+enum class FilterOption {
+    Priority, Completed, Incompleted, Alphabet
+}
+
+
 
 @Composable
 fun ThemeSwitcher(
@@ -150,11 +202,3 @@ fun ThemeSwitcher(
 
 
 
-@Preview(showBackground = true)
-@Composable
-private fun TopAppBarPreview() {
-
-    var darkTheme by remember { mutableStateOf(false) }
-
-    TopAppBar(darkTheme = darkTheme, onThemeUpdate = { darkTheme = !darkTheme })
-}
