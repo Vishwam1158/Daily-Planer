@@ -51,8 +51,8 @@ import com.viz.to_do_listapp.Model.Task
 
 
 @Composable
-fun AddTask(viewModel: TaskViewModel, navController: NavController, categories : List<Category>) {
-    var title by remember { mutableStateOf("") } // don't put " " always put "" as value, try it and placeholder boom!!
+fun AddTask(viewModel: TaskViewModel, navController: NavController, categories: List<Category>) {
+    var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -64,12 +64,10 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
 
     val task = Task(title, description, categoryId = selectedCategoryId)
 
-//    var status by remember { mutableStateOf(showDialogBox) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, end = 24.dp)//, top = 56.dp, bottom = 24.dp)
+            .padding(start = 24.dp, end = 24.dp)
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -96,18 +94,18 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                     fontSize = 24.sp
                 )
             },
-            textStyle = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.SemiBold,),
+            textStyle = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.SemiBold),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground, // Underline Color
+                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
                 cursorColor = MaterialTheme.colorScheme.onBackground,
-                focusedContainerColor = Transparent,  // Background color
+                focusedContainerColor = Transparent,
                 unfocusedContainerColor = Transparent,
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Transparent),
+                .background(Color.Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
         )
@@ -130,14 +128,14 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground, // Underline Color
+                focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
                 cursorColor = MaterialTheme.colorScheme.onBackground,
-                focusedContainerColor = Transparent,  // Background color
+                focusedContainerColor = Transparent,
                 unfocusedContainerColor = Transparent,
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Transparent),
+                .background(Color.Transparent),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true
         )
@@ -160,8 +158,8 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                 Button(
                     onClick = { isExpanded = !isExpanded },
                     shape = RoundedCornerShape(12),
-                    colors = ButtonDefaults.buttonColors(Transparent),
-                    border = BorderStroke(1.dp, Transparent),
+                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    border = BorderStroke(1.dp, Color.Transparent),
                 ) {
                     Text(
                         text = selectedCategoryName,
@@ -174,8 +172,6 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
-
-
                 DropdownMenu(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false },
@@ -190,15 +186,10 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                                 isExpanded = false
                             },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
-//                            .border(
-//                                1.dp, MaterialTheme.colorScheme.onBackground
-//                            )
-//                            .align(Alignment.End)
                         )
                     }
                 }
             }
-
 
             IconButton(
                 onClick = {
@@ -227,7 +218,11 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                         if (it.length <= 15) {
                             newCategoryName = it
                         } else {
-                            Toast.makeText(context, "Category cannot be more than 15 characters", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Category cannot be more than 15 characters",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
                     placeholder = {
@@ -242,14 +237,14 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                     colors = TextFieldDefaults.colors(
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
                         unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        focusedIndicatorColor = MaterialTheme.colorScheme.onBackground, // Underline Color
+                        focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
                         cursorColor = MaterialTheme.colorScheme.onBackground,
-                        focusedContainerColor = Transparent,  // Background color
+                        focusedContainerColor = Transparent,
                         unfocusedContainerColor = Transparent,
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .background(Transparent),
+                        .background(Color.Transparent),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     singleLine = true
                 )
@@ -258,8 +253,7 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
                         if (newCategoryName.isNotBlank()) {
                             viewModel.upsertCategory(Category(name = newCategoryName))
                             selectedCategoryName = newCategoryName
-                            selectedCategoryId = categories.last().id+1 //auto added Task in the new Created Category
-//                            newCategoryName = " "
+                            selectedCategoryId = categories.last().id + 1
                             showNewCategoryField = false
                         } else {
                             Toast.makeText(
@@ -285,14 +279,14 @@ fun AddTask(viewModel: TaskViewModel, navController: NavController, categories :
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.Bottom
     ) {
-            CustomFloatingActionButton(
-                onClick = {
-                    if (task.title.isNotBlank()) {
-                        viewModel.upsertTask(task)
-                        navController.navigate(Routes.App)
-                    } else navController.popBackStack()
-                },
-                icon = Icons.Filled.Check
-            )
+        CustomFloatingActionButton(
+            onClick = {
+                if (task.title.isNotBlank()) {
+                    viewModel.upsertTask(task)
+                    navController.navigate(Routes.App)
+                } else navController.popBackStack()
+            },
+            icon = Icons.Filled.Check
+        )
     }
 }
