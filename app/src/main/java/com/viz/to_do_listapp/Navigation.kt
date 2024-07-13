@@ -20,6 +20,7 @@ fun Navigation(viewModel: TaskViewModel, darkTheme : Boolean, onThemeUpdated : (
     var categoryList by remember { mutableStateOf(listOf<Category>()) }
     viewModel.getCategories().observe(LocalLifecycleOwner.current) { categoryList = it }
 
+
     NavHost(
         navController = navController,
         startDestination = Routes.App
@@ -28,7 +29,9 @@ fun Navigation(viewModel: TaskViewModel, darkTheme : Boolean, onThemeUpdated : (
             App(viewModel,navController = navController, darkTheme, onThemeUpdated)
         }
         composable(Routes.Home.route) {
-            HomePage(viewModel, darkTheme) //, navController = navController
+            HomePage(viewModel = viewModel, darkTheme = darkTheme, showSearch = false ) {
+
+            }
         }
         composable(Routes.Task) {
             AddTask(viewModel, navController = navController, categoryList)
